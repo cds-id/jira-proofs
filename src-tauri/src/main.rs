@@ -2,7 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::sync::Arc;
-use tauri::Emitter;
 use tokio::sync::Mutex;
 
 // Import from the lib crate
@@ -32,6 +31,7 @@ fn main() {
             active_card: Arc::new(Mutex::new(None)),
             recording_handle: Arc::new(Mutex::new(None)),
             recording_path: Arc::new(Mutex::new(None)),
+            pending_result: Arc::new(Mutex::new(None)),
         })
         .invoke_handler(tauri::generate_handler![
             commands::take_screenshot,
@@ -46,6 +46,8 @@ fn main() {
             commands::set_active_card,
             commands::get_presets,
             commands::get_hotkeys,
+            commands::read_file_base64,
+            commands::get_pending_action,
         ])
         .setup(|app| {
             // Check deps and notify
@@ -72,7 +74,7 @@ fn main() {
             for (key, action) in shortcuts {
                 let action = action.to_string();
                 if let Err(e) = app.global_shortcut().on_shortcut(key.as_str(), move |_app, _shortcut, _event| {
-                    let _ = _app.emit("tray-action", action.clone());
+                    tray::handle_tray_action(_app, &action);
                 }) {
                     eprintln!("Failed to register shortcut '{}': {}", key, e);
                 }

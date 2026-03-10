@@ -11,6 +11,9 @@
   },
   "app": {
     "withGlobalTauri": true,
+    "security": {
+      "csp": "default-src 'self' 'unsafe-inline' asset: https://asset.localhost; img-src 'self' asset: https://asset.localhost data:; media-src 'self' asset: https://asset.localhost"
+    },
     "windows": [
       {
         "label": "main",
@@ -20,7 +23,7 @@
         "height": 600,
         "resizable": true,
         "decorations": false,
-        "transparent": true,
+        "transparent": false,
         "alwaysOnTop": true
       }
     ]

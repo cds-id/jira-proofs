@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
-  import { convertFileSrc } from '@tauri-apps/api/core';
 
   export let filePath: string;
   export let filename: string;
@@ -27,10 +26,22 @@
   let videoFormat: 'mp4' | 'gif' = 'mp4';
   let uploading = false;
   let errorMsg = '';
-
-  const mediaSrc = convertFileSrc(filePath);
+  let mediaSrc = '';
 
   onMount(async () => {
+    // Load image as base64 from backend
+    try {
+      const b64: string = await invoke('read_file_base64', { filePath });
+      const ext = filename.split('.').pop()?.toLowerCase() || 'png';
+      if (isImage) {
+        mediaSrc = `data:image/${ext};base64,${b64}`;
+      } else {
+        mediaSrc = `data:video/${ext};base64,${b64}`;
+      }
+    } catch (e) {
+      console.error('Failed to load preview:', e);
+    }
+
     try {
       const raw: [string, string][] = await invoke('get_presets');
       presets = raw.map(([name, template]) => ({ name, template }));
@@ -69,7 +80,6 @@
       let actualFilePath = filePath;
       let actualIsImage = isImage;
 
-      // Convert to GIF if requested for video
       if (!isImage && videoFormat === 'gif') {
         const gifResult: { file_path: string; filename: string; is_image: boolean } =
           await invoke('convert_to_gif', { inputPath: filePath });
@@ -106,11 +116,15 @@
   <div class="popup">
     <h2>Preview — {filename}</h2>
 
-    {#if isImage}
-      <img class="preview" src={mediaSrc} alt={filename} />
+    {#if mediaSrc}
+      {#if isImage}
+        <img class="preview" src={mediaSrc} alt={filename} />
+      {:else}
+        <!-- svelte-ignore a11y-media-has-caption -->
+        <video class="preview" src={mediaSrc} controls></video>
+      {/if}
     {:else}
-      <!-- svelte-ignore a11y-media-has-caption -->
-      <video class="preview" src={mediaSrc} controls></video>
+      <div class="preview" style="display:flex;align-items:center;justify-content:center;height:120px;color:var(--text);opacity:0.5;">Loading preview...</div>
     {/if}
 
     <div class="controls">

@@ -16,6 +16,18 @@ pub struct AppState {
     pub active_card: Arc<Mutex<Option<JiraIssue>>>,
     pub recording_handle: Arc<Mutex<Option<tokio::process::Child>>>,
     pub recording_path: Arc<Mutex<Option<String>>>,
+    pub pending_result: Arc<Mutex<Option<PendingAction>>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum PendingAction {
+    #[serde(rename = "capture")]
+    Capture(CaptureResult),
+    #[serde(rename = "set_card")]
+    SetCard,
+    #[serde(rename = "settings")]
+    Settings,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -307,6 +319,20 @@ pub async fn get_presets(state: State<'_, AppState>) -> Result<Vec<(String, Stri
         ("Bug Evidence".to_string(), presets.bug_evidence.clone()),
         ("Work Evidence".to_string(), presets.work_evidence.clone()),
     ])
+}
+
+#[tauri::command]
+pub async fn read_file_base64(file_path: String) -> Result<String, String> {
+    use base64::Engine;
+    let bytes = std::fs::read(&file_path)
+        .map_err(|e| format!("Failed to read file: {}", e))?;
+    Ok(base64::engine::general_purpose::STANDARD.encode(&bytes))
+}
+
+#[tauri::command]
+pub async fn get_pending_action(state: State<'_, AppState>) -> Result<Option<PendingAction>, String> {
+    let mut pending = state.pending_result.lock().await;
+    Ok(pending.take())
 }
 
 #[tauri::command]

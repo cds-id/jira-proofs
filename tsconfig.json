@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.svelte"]
+}

@@ -192,7 +192,11 @@ pub fn handle_tray_action(app: &AppHandle, action: &str) {
                 let output_str = output_path.to_string_lossy().to_string();
 
                 let (cmd, args) = capture::build_record_command(mode, &output_str, region);
-                match tokio::process::Command::new(&cmd).args(&args).spawn() {
+                match tokio::process::Command::new(&cmd)
+                    .args(&args)
+                    .stdout(std::process::Stdio::null())
+                    .stderr(std::process::Stdio::null())
+                    .spawn() {
                     Ok(child) => {
                         *state.recording_handle.lock().await = Some(child);
                         *state.recording_path.lock().await = Some(output_str);

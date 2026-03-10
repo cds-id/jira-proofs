@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "jira-proofs",
   "version": "0.1.0",
-  "identifier": "com.jiraproofs.app",
+  "identifier": "com.ciptadusa.jira-proofs",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -30,7 +30,20 @@
   },
   "bundle": {
     "active": true,
-    "icon": ["icons/icon.png"]
+    "icon": ["icons/icon.png"],
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libayatana-appindicator3-1", "libgtk-3-0"],
+        "section": "utils",
+        "priority": "optional"
+      }
+    },
+    "shortDescription": "Screenshot & recording tool with Jira integration",
+    "longDescription": "Tauri v2 tray app for Linux — capture screenshots/recordings, upload to Cloudflare R2, and post evidence to Jira Cloud cards. Built by cds.id (Cipta Dusa Solusi).",
+    "copyright": "Copyright (c) 2026 Indra Gunanda / cds.id",
+    "category": "Utility",
+    "homepage": "https://github.com/cds-id/jira-proofs",
+    "publisher": "cds.id"
   },
   "plugins": {
     "shell": { "open": true }

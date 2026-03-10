@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
 
-  const dispatch = createEventDispatcher();
+  export let onClose: () => void = () => {};
 
   interface JiraIssue {
     key: string;
@@ -42,7 +42,7 @@
   async function selectCard(card: JiraIssue) {
     try {
       await invoke('set_active_card', { card });
-      dispatch('close');
+      onClose();
     } catch (e) {
       errorMsg = String(e);
     }
@@ -51,7 +51,7 @@
   async function clearCard() {
     try {
       await invoke('set_active_card', { card: null });
-      dispatch('close');
+      onClose();
     } catch (e) {
       errorMsg = String(e);
     }
@@ -93,7 +93,7 @@
 
     <div class="button-row">
       <button class="btn-secondary" on:click={clearCard}>Clear Active Card</button>
-      <button class="btn-cancel" on:click={() => dispatch('close')}>Cancel</button>
+      <button class="btn-cancel" on:click={onClose}>Cancel</button>
     </div>
   </div>
 </div>

@@ -12,7 +12,6 @@
   let showCardPicker = false;
   let showSettings = false;
   let captureResult: { file_path: string; filename: string; is_image: boolean } | null = null;
-  let debugMsg = 'Waiting...';
 
   interface PendingCapture {
     type: 'capture';
@@ -34,7 +33,6 @@
     try {
       const pending: PendingAction | null = await invoke('get_pending_action');
       if (!pending) return;
-      debugMsg = `Got: ${pending.type}`;
       switch (pending.type) {
         case 'capture': {
           const cap = pending as PendingCapture;
@@ -60,7 +58,6 @@
           break;
       }
     } catch (e) {
-      debugMsg = `Error: ${e}`;
       console.error('Failed to get pending action:', e);
     }
   }
@@ -74,7 +71,6 @@
   }
 
   onMount(() => {
-    debugMsg = 'Mounted, polling...';
     pollInterval = setInterval(checkPending, 500);
     checkPending();
   });
@@ -84,35 +80,15 @@
   });
 </script>
 
-<div class="app-container">
-  {#if showPreview && captureResult}
-    <PreviewPopup
-      filePath={captureResult.file_path}
-      filename={captureResult.filename}
-      isImage={captureResult.is_image}
-      on:close={hideWindow}
-    />
-  {:else if showCardPicker}
-    <CardPicker on:close={hideWindow} />
-  {:else if showSettings}
-    <Settings on:close={hideWindow} />
-  {:else}
-    <div class="debug-status">{debugMsg}</div>
-  {/if}
-</div>
-
-<style>
-  .app-container {
-    width: 100vw;
-    height: 100vh;
-    background: #1e1e2e;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .debug-status {
-    padding: 1rem;
-    color: #cdd6f4;
-    font-size: 0.9rem;
-    opacity: 0.7;
-  }
-</style>
+{#if showPreview && captureResult}
+  <PreviewPopup
+    filePath={captureResult.file_path}
+    filename={captureResult.filename}
+    isImage={captureResult.is_image}
+    onClose={hideWindow}
+  />
+{:else if showCardPicker}
+  <CardPicker onClose={hideWindow} />
+{:else if showSettings}
+  <Settings onClose={hideWindow} />
+{/if}

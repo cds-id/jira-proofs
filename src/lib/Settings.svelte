@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
 
-  const dispatch = createEventDispatcher();
+  export let onClose: () => void = () => {};
 
   let hotkeys: { action: string; key: string }[] = [];
 
@@ -37,7 +37,7 @@
     </section>
 
     <div class="button-row">
-      <button class="btn-primary" on:click={() => dispatch('close')}>Close</button>
+      <button class="btn-primary" on:click={onClose}>Close</button>
     </div>
   </div>
 </div>

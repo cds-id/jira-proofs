@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
 
   export let filePath: string;
   export let filename: string;
   export let isImage: boolean;
-
-  const dispatch = createEventDispatcher();
+  export let onClose: () => void = () => {};
 
   interface JiraIssue {
     key: string;
@@ -95,7 +94,7 @@
         isImage: actualIsImage,
       });
 
-      dispatch('close');
+      onClose();
     } catch (e) {
       errorMsg = String(e);
     } finally {
@@ -104,11 +103,11 @@
   }
 
   async function handleSaveLocal() {
-    dispatch('close');
+    onClose();
   }
 
   function handleCancel() {
-    dispatch('close');
+    onClose();
   }
 </script>
 

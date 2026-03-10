@@ -39,11 +39,11 @@
       }
     },
     "shortDescription": "Screenshot & recording tool with Jira integration",
-    "longDescription": "Tauri v2 tray app for Linux — capture screenshots/recordings, upload to Cloudflare R2, and post evidence to Jira Cloud cards. Built by cds.id (Cipta Dusa Solusi).",
-    "copyright": "Copyright (c) 2026 Indra Gunanda / cds.id",
+    "longDescription": "Tauri v2 tray app for Linux — capture screenshots/recordings, upload to Cloudflare R2, and post evidence to Jira Cloud cards. Built by PT Cipta Dua Saudara.",
+    "copyright": "Copyright (c) 2026 PT Cipta Dua Saudara",
     "category": "Utility",
     "homepage": "https://github.com/cds-id/jira-proofs",
-    "publisher": "cds.id"
+    "publisher": "PT Cipta Dua Saudara"
   },
   "plugins": {
     "shell": { "open": true }

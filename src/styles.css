@@ -77,6 +77,11 @@ textarea {
   font-family: inherit;
 }
 
+select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
 select:focus,
 input:focus,
 textarea:focus {

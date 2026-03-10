@@ -32,11 +32,17 @@ fn create_s3_client(config: &R2Config) -> Client {
     let credentials = Credentials::new(
         &config.access_key_id, &config.secret_access_key, None, None, "jira-proofs",
     );
+    let timeout_config = aws_sdk_s3::config::timeout::TimeoutConfig::builder()
+        .operation_timeout(std::time::Duration::from_secs(30))
+        .connect_timeout(std::time::Duration::from_secs(10))
+        .build();
     let s3_config = S3ConfigBuilder::new()
         .endpoint_url(format!("https://{}.r2.cloudflarestorage.com", config.account_id))
         .region(Region::new("auto"))
         .credentials_provider(credentials)
         .force_path_style(true)
+        .timeout_config(timeout_config)
+        .behavior_version_latest()
         .build();
     Client::from_conf(s3_config)
 }

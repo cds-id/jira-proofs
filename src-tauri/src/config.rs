@@ -65,8 +65,8 @@ impl Default for AppConfig {
                 public_url: "https://assets.yourdomain.com".into(),
             },
             hotkeys: HotkeyConfig {
-                screenshot_full: "Print".into(),
-                screenshot_region: "Shift+Print".into(),
+                screenshot_full: "PrintScreen".into(),
+                screenshot_region: "Shift+PrintScreen".into(),
                 record_screen: "Ctrl+Alt+R".into(),
                 record_region: "Ctrl+Alt+Shift+R".into(),
                 stop_recording: "Ctrl+Alt+S".into(),

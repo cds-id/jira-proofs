@@ -41,7 +41,7 @@ work_evidence = "Work: {description}\n{url}"
 #[test]
 fn test_config_default_creation() {
     let config = AppConfig::default();
-    assert_eq!(config.hotkeys.screenshot_full, "Print");
+    assert_eq!(config.hotkeys.screenshot_full, "PrintScreen");
     assert_eq!(config.hotkeys.stop_recording, "Ctrl+Alt+S");
 }
 

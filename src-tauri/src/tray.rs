@@ -1,5 +1,5 @@
 use tauri::{
-    AppHandle, Emitter,
+    AppHandle, Emitter, image::Image,
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{TrayIcon, TrayIconBuilder},
 };
@@ -32,8 +32,14 @@ pub fn create_tray(app: &AppHandle) -> Result<TrayIcon, tauri::Error> {
         ],
     )?;
 
+    let default_icon = Image::new(
+        include_bytes!("../icons/tray-icon.rgba"),
+        32,
+        32,
+    );
+
     let tray = TrayIconBuilder::with_id("main")
-        .icon(app.default_window_icon().unwrap().clone())
+        .icon(default_icon.clone())
         .tooltip("Jira Proofs")
         .menu(&menu)
         .on_menu_event(|app, event| {
@@ -61,9 +67,10 @@ pub fn update_tooltip(tray: &TrayIcon, card: Option<&str>) {
 }
 
 pub fn set_recording_icon(tray: &TrayIcon, recording: bool) {
-    // For now, just change the tooltip to indicate recording state.
-    // Icon swapping will be added in Task 14 when icon assets are created.
-    if recording {
-        let _ = tray.set_tooltip(Some("Jira Proofs — RECORDING"));
-    }
+    let icon = if recording {
+        Image::new(include_bytes!("../icons/tray-icon-recording.rgba"), 32, 32)
+    } else {
+        Image::new(include_bytes!("../icons/tray-icon.rgba"), 32, 32)
+    };
+    let _ = tray.set_icon(Some(icon));
 }

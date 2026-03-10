@@ -42,9 +42,10 @@ pub async fn search_issues(config: &JiraConfig, query: &str) -> Result<Vec<JiraI
     } else {
         format!("project = {} AND summary ~ \"{}\" AND status != Done ORDER BY updated DESC", config.default_project, safe_query)
     };
-    let url = format!("{}/rest/api/3/search", config.base_url);
-    let response = client.get(&url).header("Authorization", &auth).header("Accept", "application/json")
-        .query(&[("jql", &jql), ("maxResults", &"20".to_string()), ("fields", &"summary".to_string())])
+    let url = format!("{}/rest/api/3/search/jql", config.base_url);
+    let response = client.post(&url).header("Authorization", &auth)
+        .header("Content-Type", "application/json")
+        .json(&json!({"jql": jql, "maxResults": 20, "fields": ["summary"]}))
         .send().await.map_err(|e| format!("Jira search failed: {}", e))?;
     if !response.status().is_success() {
         let status = response.status();

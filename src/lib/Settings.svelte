@@ -1,15 +1,19 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import { invoke } from '@tauri-apps/api/core';
 
   const dispatch = createEventDispatcher();
 
-  const hotkeys = [
-    { action: 'Screenshot (full screen)', key: 'Print' },
-    { action: 'Screenshot (region select)', key: 'Shift+Print' },
-    { action: 'Start recording (full screen)', key: 'Ctrl+Alt+R' },
-    { action: 'Start recording (region select)', key: 'Ctrl+Alt+Shift+R' },
-    { action: 'Stop recording', key: 'Ctrl+Alt+S' },
-  ];
+  let hotkeys: { action: string; key: string }[] = [];
+
+  onMount(async () => {
+    try {
+      const result = await invoke<[string, string][]>('get_hotkeys');
+      hotkeys = result.map(([action, key]) => ({ action, key }));
+    } catch (e) {
+      console.error('Failed to load hotkeys:', e);
+    }
+  });
 </script>
 
 <div class="popup-overlay">

@@ -17,29 +17,6 @@ pub fn build_auth_header(email: &str, api_token: &str) -> String {
     format!("Basic {}", BASE64.encode(credentials.as_bytes()))
 }
 
-pub fn build_adf_image_comment(description: &str, image_url: &str) -> Value {
-    json!({
-        "version": 1, "type": "doc",
-        "content": [
-            {"type": "paragraph", "content": [{"type": "text", "text": description}]},
-            {"type": "mediaSingle", "attrs": {"layout": "center"},
-             "content": [{"type": "media", "attrs": {"type": "external", "url": image_url}}]}
-        ]
-    })
-}
-
-pub fn build_adf_link_comment(description: &str, link_url: &str) -> Value {
-    json!({
-        "version": 1, "type": "doc",
-        "content": [
-            {"type": "paragraph", "content": [{"type": "text", "text": description}]},
-            {"type": "paragraph", "content": [
-                {"type": "text", "text": link_url, "marks": [{"type": "link", "attrs": {"href": link_url}}]}
-            ]}
-        ]
-    })
-}
-
 pub fn build_adf_comment(preset_title: &str, description: &str, url: &str, is_image: bool) -> Value {
     let mut content = vec![
         json!({"type": "heading", "attrs": {"level": 3}, "content": [{"type": "text", "text": preset_title}]}),
@@ -59,10 +36,11 @@ pub fn build_adf_comment(preset_title: &str, description: &str, url: &str, is_im
 pub async fn search_issues(config: &JiraConfig, query: &str) -> Result<Vec<JiraIssue>, String> {
     let client = Client::new();
     let auth = build_auth_header(&config.email, &config.api_token);
+    let safe_query = query.replace('"', "\\\"");
     let jql = if query.is_empty() {
         format!("project = {} AND status != Done ORDER BY updated DESC", config.default_project)
     } else {
-        format!("project = {} AND summary ~ \"{}\" AND status != Done ORDER BY updated DESC", config.default_project, query)
+        format!("project = {} AND summary ~ \"{}\" AND status != Done ORDER BY updated DESC", config.default_project, safe_query)
     };
     let url = format!("{}/rest/api/3/search", config.base_url);
     let response = client.get(&url).header("Authorization", &auth).header("Accept", "application/json")

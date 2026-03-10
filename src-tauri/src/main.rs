@@ -45,6 +45,7 @@ fn main() {
             commands::get_active_card,
             commands::set_active_card,
             commands::get_presets,
+            commands::get_hotkeys,
         ])
         .setup(|app| {
             // Check deps and notify

@@ -63,6 +63,9 @@ pub async fn start_recording(
     state: State<'_, AppState>,
     mode: String,
 ) -> Result<String, String> {
+    if state.recording_handle.lock().await.is_some() {
+        return Err("Recording already in progress".into());
+    }
     let local_dir = config::expand_path(&state.config.storage.local_dir);
     std::fs::create_dir_all(&local_dir)
         .map_err(|e| format!("Failed to create dir: {}", e))?;
@@ -303,5 +306,17 @@ pub async fn get_presets(state: State<'_, AppState>) -> Result<Vec<(String, Stri
     Ok(vec![
         ("Bug Evidence".to_string(), presets.bug_evidence.clone()),
         ("Work Evidence".to_string(), presets.work_evidence.clone()),
+    ])
+}
+
+#[tauri::command]
+pub async fn get_hotkeys(state: State<'_, AppState>) -> Result<Vec<(String, String)>, String> {
+    let h = &state.config.hotkeys;
+    Ok(vec![
+        ("Screenshot (Full)".into(), h.screenshot_full.clone()),
+        ("Screenshot (Region)".into(), h.screenshot_region.clone()),
+        ("Record Screen".into(), h.record_screen.clone()),
+        ("Record Region".into(), h.record_region.clone()),
+        ("Stop Recording".into(), h.stop_recording.clone()),
     ])
 }

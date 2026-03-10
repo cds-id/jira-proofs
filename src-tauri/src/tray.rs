@@ -13,6 +13,7 @@ pub fn create_tray(app: &AppHandle) -> Result<TrayIcon, tauri::Error> {
     let stop_recording = MenuItem::with_id(app, "stop_recording", "Stop Recording", true, None::<&str>)?;
     let sep2 = PredefinedMenuItem::separator(app)?;
     let set_card = MenuItem::with_id(app, "set_card", "Set Active Jira Card", true, None::<&str>)?;
+    let settings = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
     let sep3 = PredefinedMenuItem::separator(app)?;
     let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
 
@@ -27,6 +28,7 @@ pub fn create_tray(app: &AppHandle) -> Result<TrayIcon, tauri::Error> {
             &stop_recording,
             &sep2,
             &set_card,
+            &settings,
             &sep3,
             &quit,
         ],

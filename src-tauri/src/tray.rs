@@ -116,6 +116,9 @@ pub fn set_recording_icon(tray: &TrayIcon, recording: bool) {
 
 fn show_main_window(app: &AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
+        if let Ok(icon) = Image::from_bytes(include_bytes!("../icons/32x32.png")) {
+            let _ = window.set_icon(icon);
+        }
         let _ = window.show();
         let _ = window.set_focus();
     }
